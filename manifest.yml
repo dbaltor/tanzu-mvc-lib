@@ -2,7 +2,6 @@
 applications:
 - name: tanzu-lib
   path: build/libs/library-mvc-1.0.0.jar
-  random-route: true
   env:
     JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ } }'
   buildpacks:
