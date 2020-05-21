@@ -1,4 +1,4 @@
-# Denis MVC application running on Tanzu Application Service (Former Pivotal Cloud Foundry)
+# MVC application running on Tanzu Application Service (Former Pivotal Cloud Foundry)
 <br>
 This simple demo aims to show the power of Tanzu Application Service (TAS) platfom when it comes to scale out easily application instances (AIs) and attach backing services thereon.
 <br>
@@ -13,7 +13,6 @@ You can generate 100 books at a time clicking on the button <i>Load Books</i>. T
 You can visualise the list of readers and books following the corresponding links. Use the Browser's back buttom to return.<br>
 <p/>
 <p/>
-<hr>
 <h2>Testing locally:</h2>
 <br>
 <code>java -jar build/libs/library-mvc-1.0.0.jar</code><br>
