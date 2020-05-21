@@ -1,3 +1,9 @@
+
+# build artifacts
+.gradle
+build
+bin
+
 # Compiled class file
 *.class
 
