@@ -23,8 +23,7 @@ URL:<br>
 localhost:8080
 <p/>
 <p/>
-<hr>
-<b>Testing on the Cloud:</b><br>
+<h2>Testing on the Cloud:</h2>
 <br>
 1. Publish the application on TAS using the <code>cf push</code>command.<br>
 <br>
@@ -72,16 +71,14 @@ applications:
 7. Go back to the application and generate more data. You can follow some of the links to the lists and refresh the Browser multiple times. You will notice the same data shows up across all AIs (different background colors).
 <p/>
 <p/>
-<hr>
-<b>Cleaning up:</b><br>
+<h2>Cleaning up:</h2>
 <br>
 8. <code>cf unbind-service tanzu-lib library-db</code><br>
 9. <code>cf delete-service library-db</code><br>
 10.<code>cf delete tanzu-lib -r</code><br>
 <p/>
 <p/>
-<hr>
-<b>Architectural Decisions:</b><br>
+<h2>Architectural Decisions:</h2>
 <br>
 1) The application implements the Model-View-Controller (MVC) architectural pattern which the Spring framework makes it really easy.<br>
 <br>
