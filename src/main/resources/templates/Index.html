@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/header.html :: header(pageTitle='Main Page')">
+</head>
+<body>
+    <table style="margin-left:auto;margin-right:auto;">
+        <tbody>
+            <tr>
+                <td>
+                    <img th:src="@{springboot.png}" width="400" height="200"/>
+                </td>
+                <span th:if="${uiConfig.tanzu}">
+                    <td>
+                        <img th:src="@{heart.png}" width="200" height="200"/>
+                    </td> 
+                    <td>
+                        <img th:src="@{tanzu.png}" width="200" height="200"/>
+                    </td> 
+                </span>
+            </tr>
+        </tbody>
+    </table>
+    <h1><center>Welcome to our Library</center></h1>
+    <div>
+        <h2><a href="/readers/list">List of Readers</a></h2>
+    </div>
+    <p/><p/>
+    <div>
+        <h2><a href="books/list">List of Books</a></h2>
+    </div>
+    <p/><p/><p/><p/>
+    <table width="300">
+        <tbody>
+            <tr>
+                <td>
+                    <button onclick="callAndAlert('/readers/load')">Load Readers</button>
+                </td>
+                <td>
+                    <button onclick="callAndAlert('/books/load')">Load Books</button>
+                </td> 
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        const callAndAlert = async (URL) => {
+            try {
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                });
+                const text = await response.text()
+                alert(text)
+            } catch (e) {
+                alert(e.text);
+            }
+        }        
+    </script>
+</body>
+</html>

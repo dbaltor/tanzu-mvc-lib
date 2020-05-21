@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/header.html :: header(pageTitle='List of Books')">
+</head>
+<body> 
+    <h1 th:text="${readerId} ? ' List of Books Borrowed by Reader ID ' + ${readerId} : 'List of Books'"/>
+    <table border="1">
+        <thead>
+            <tr>
+                <td><b>Id</b></td>
+                <td><b>Name</b></td>
+                <td><b>Author</b></td>
+                <td><b>Genre</b></td>
+                <td><b>Publisher</b></td>
+                <td><b>Borrowed by</b></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="book: ${books}">
+                <td th:text="${book.id}"/>
+                <td th:text="${book.name}"/>
+                <td th:text="${book.author}"/>
+                <td th:text="${book.genre}"/>
+                <td th:text="${book.publisher}"/>
+                <!--/*<td th:text="${book.readerId} ? ${book.readerId} : ''"/>*/-->
+                <!--/*<td><a th:href="@{'/readers/list?reader=' + ${book.readerId}}" th:text="${book.readerId} ? ${book.readerId} : ''" /></td>*/-->
+                <td>
+                    <span th:if="${book.readerId}">
+                        <a th:href="@{'/readers/list?reader=' + ${book.readerId}}" th:text="${book.readerId}"/>
+                    </span>
+                    <span th:unless="${book.readerId}">AVAILABLE</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
