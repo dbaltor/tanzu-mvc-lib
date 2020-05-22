@@ -72,9 +72,8 @@ applications:
 <p/>
 <h2>Cleaning up:</h2>
 <br>
-8. <code>cf unbind-service tanzu-lib library-db</code><br>
+8. <code>cf delete tanzu-lib -r</code><br>
 9. <code>cf delete-service library-db</code><br>
-10.<code>cf delete tanzu-lib -r</code><br>
 <p/>
 <p/>
 <h2>Architectural Decisions:</h2>
