@@ -1,12 +1,15 @@
 package library.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +25,8 @@ public class Reader {
     private @GeneratedValue @Id long id;
     private @NonNull String firstName;
     private @NonNull String lastName;
-    private @NonNull String dob;
+    @Temporal(TemporalType.DATE)
+    private @NonNull Date dob;
     private @NonNull String address;
     private @NonNull String phone;
     

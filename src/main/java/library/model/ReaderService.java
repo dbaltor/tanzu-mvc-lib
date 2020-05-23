@@ -1,6 +1,5 @@
 package library.model;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +32,8 @@ public class ReaderService {
                 Reader.of(
                     faker.name().firstName(), 
                     faker.name().lastName(),
-                    new SimpleDateFormat("dd-MM-yyyy").format(faker.date().birthday()),
+                    //new SimpleDateFormat("dd-MM-yyyy").format(faker.date().birthday()),
+                    faker.date().birthday(),
                     faker.address().streetAddress(), 
                     faker.phoneNumber().phoneNumber()
                 )
