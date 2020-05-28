@@ -96,7 +96,7 @@ public class ReaderController {
                                 errorMsg.append(" *Maximum allowed borrowed books exceeded.");
                                 break;
                             default:
-                                errorMsg.append(" *Unkown error.");
+                                errorMsg.append(" *Unexpected error.");
                         }
                     }
                     return errorMsg.toString();
