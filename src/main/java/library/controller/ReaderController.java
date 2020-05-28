@@ -5,6 +5,7 @@ import library.model.ReaderService;
 import library.model.BookService;
 import library.model.Reader;
 import library.model.exception.BorrowingException;
+import library.model.exception.ReturningException;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -105,7 +106,7 @@ public class ReaderController {
             return String.format("No reader with ID %d has been found.", readerId);
     }
 
-    @PostMapping("/readers/{id}/returnBooks")
+    /*@PostMapping("/readers/{id}/returnBooks")
     @ResponseBody
     public String returnBooks(
         @PathVariable(name = "id") long readerId,
@@ -120,6 +121,38 @@ public class ReaderController {
 
                 val returnedBooks = bookService.returnBooks(booksToReturn, reader.get());
                 return String.format("The reader ID %d has returned %d book(s).", readerId, returnedBooks.size());
+            }
+            return String.format("No reader with ID %d has been found.", readerId);
+    }*/
+    @PostMapping("/readers/{id}/returnBooks")
+    @ResponseBody
+    public String returnBooks(
+        @PathVariable(name = "id") long readerId,
+        @RequestBody BooksRequest booksRequest) {
+            val reader = readerService.retrieveReader(readerId);
+            if (reader.isPresent()){
+                val booksToReturn = Arrays.stream(booksRequest.bookIds)
+                .mapToObj(id -> bookService.retrieveBook(id))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toList());
+                try{ 
+                    val returnedBooks = bookService.returnBooks(booksToReturn, reader.get());
+                    return String.format("The reader ID %d has returned %d book(s).", readerId, returnedBooks.size());
+                } catch(ReturningException e) {
+                    val errorMsg = new StringBuilder("Errors found:");
+                    for(BookService.ReturningErrors error : e.errors) {
+                        switch (error) {
+                            // Reserved for future usage
+                            //case PLACEHOLDER:
+                            //    errorMsg.append(" *....");
+                            //    break;
+                            default:
+                                errorMsg.append(" *Unexpected error.");
+                        }
+                    }
+                    return errorMsg.toString();
+                }
             }
             return String.format("No reader with ID %d has been found.", readerId);
     }

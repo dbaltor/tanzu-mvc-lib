@@ -4,6 +4,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import library.model.exception.BorrowingException;
+import library.model.exception.ReturningException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,26 +129,27 @@ public class BookService {
         return borrowedBooks; // return list of borrowed books
    }
 
-    public List<Book> returnBooks(List<Book> booksToReturn, Reader reader) {
+    public List<Book> returnBooks(List<Book> booksToReturn, Reader reader) throws ReturningException {
         // filter out books not borrowed by this reader
         val books = booksToReturn
             .stream()
             .filter(book -> book.getReaderId() == reader.getId())
             .collect(toList());
         // Validate list as per business rules
-        if (bookReturningValidator(books, reader).isEmpty()){
-            val returnedBooks = books.stream()
-                .map(book -> {
-                    book.setReaderId(0); // disassociate the book from the reader
-                    return book;
-                })
-                .collect(toList());
-            bookRepository.saveAll(returnedBooks);
-            reader.getBooks().removeAll(returnedBooks);
-            return returnedBooks; // return list of returned books
+        val errors = bookReturningValidator(books, reader);
+        if (!errors.isEmpty()){
+            throw new ReturningException(errors);
         }
-        return List.of(); // No books returned
-    } 
+        val returnedBooks = books.stream()
+            .map(book -> {
+                book.setReaderId(0); // disassociate the book from the reader
+                return book;
+            })
+            .collect(toList());
+        bookRepository.saveAll(returnedBooks);
+        reader.getBooks().removeAll(returnedBooks);
+        return returnedBooks; // return list of returned books
+    }
 
      /**************************************************\
                     Business Rules
@@ -160,6 +162,7 @@ public class BookService {
     }
 
     public enum ReturningErrors {
+        PLACEHOLDER
         // Future error codes
     }
 
