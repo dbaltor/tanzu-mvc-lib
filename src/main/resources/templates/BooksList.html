@@ -13,6 +13,7 @@
                 <td><b>Genre</b></td>
                 <td><b>Publisher</b></td>
                 <td><b>Borrowed by</b></td>
+                <td><b>Action</b></td>
             </tr>
         </thead>
         <tbody>
@@ -22,14 +23,14 @@
                 <td th:text="${book.author}"/>
                 <td th:text="${book.genre}"/>
                 <td th:text="${book.publisher}"/>
-                <!--/*<td th:text="${book.readerId} ? ${book.readerId} : ''"/>*/-->
-                <!--/*<td><a th:href="@{'/readers/list?reader=' + ${book.readerId}}" th:text="${book.readerId} ? ${book.readerId} : ''" /></td>*/-->
-                <td>
-                    <span th:if="${book.readerId}">
-                        <a th:href="@{'/readers/list?reader=' + ${book.readerId}}" th:text="${book.readerId}"/>
-                    </span>
-                    <span th:unless="${book.readerId}">AVAILABLE</span>
-                </td>
+                <span th:if="${book.readerId}">
+                    <td><a th:href="@{'/readers/list?reader=' + ${book.readerId}}" th:text="${book.readerId}"/></td>
+                    <td><a th:href="'javascript:callAndAlert(\'/readers/' + ${book.readerId} + '/returnBooks\', { \'bookIds\': [\'' + ${book.id} + '\'] }, true)'">Return</a></td>
+                </span>
+                <span th:unless="${book.readerId}">
+                    <td>AVAILABLE</td>
+                    <td><a th:href="'javascript:borrowBooks({ \'bookIds\': [\'' + ${book.id} + '\'] })'">Borrow</a></td>
+                </span>
             </tr>
         </tbody>
     </table>

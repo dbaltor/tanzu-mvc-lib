@@ -3,6 +3,8 @@ package library.model;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import library.model.exception.BorrowingException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,25 +59,32 @@ public class BookService {
             // Try to borrow each book to a differnt reader through all readers
             // or at least for DEFAULT_BORROWED_BOOKS books
             if (hasReaders && (i < nReaders || i < DEFAULT_BORROWED_BOOKS)) {
-                if (borrowBooks(
-                    List.of(book), 
-                    readers.get().get(i % nReaders)
-                ).isEmpty()){ // book could not be borrowed but need to be saved
+                try {
+                    borrowBooks(
+                        List.of(book), 
+                        readers.get().get(i % nReaders)
+                    );
+                } catch(BorrowingException e) {
+                    // book could not be borrowed but need to be saved
                     book = bookRepository.save(book);
-                };
+                }
             }
             else { // save book without being borrowed
                 book = bookRepository.save(book);
             }
             books.add(book);
         }
-        log.info(String.format("Book database loaded with %d records", total));
+        log.info(String.format("Book database loaded with %d records.", total));
         return books;
     }
 
     public void cleanUpDatabase() {
         bookRepository.deleteAll();
         log.info("Book database cleaned up...");
+    }
+
+    public Optional<Book> retrieveBook(long id) {
+        return bookRepository.findById(id);
     }
 
     public List<Book> retrieveBooks(Optional<Integer> pageNum, Optional<Integer> pageSize) {
@@ -97,47 +106,48 @@ public class BookService {
         return bookRepository.findByReader(id);
     }
 
-    public List<Book> borrowBooks(List<Book> booksToBorrow, Reader reader) {
+    public List<Book> borrowBooks(List<Book> booksToBorrow, Reader reader) throws BorrowingException {
         // filter out books already borrowed
-       val books = booksToBorrow
-           .stream()
-           .filter(book -> book.getReaderId() == 0)
-           .collect(toList());
-       // Validate list as per business rules
-       if (bookBorrowingValidator(books, reader).isEmpty()){
-           books.stream()
-               .map(book -> {
-                   book.setReaderId(reader.getId()); // associate the book to the reader
-                   return book;
-               })
-               .collect(toList());
-           bookRepository.saveAll(books);
-           reader.getBooks().addAll(books);
-           return books; // return list of books borrowed
-       }
-       return List.of(); // No books borrowed
+        val books = booksToBorrow
+            .stream()
+            .filter(book -> book.getReaderId() == 0)
+            .collect(toList());
+        // Validate list as per business rules
+        val errors = bookBorrowingValidator(books, reader);
+        if (!errors.isEmpty()){
+            throw new BorrowingException(errors);
+        }
+        val borrowedBooks = books.stream()
+            .map(book -> {
+                book.setReaderId(reader.getId()); // associate the book to the reader
+                return book;
+            })
+            .collect(toList());
+        bookRepository.saveAll(borrowedBooks);
+        reader.getBooks().addAll(borrowedBooks);
+        return borrowedBooks; // return list of borrowed books
    }
 
     public List<Book> returnBooks(List<Book> booksToReturn, Reader reader) {
-        // filter out books not borrowed
+        // filter out books not borrowed by this reader
         val books = booksToReturn
             .stream()
-            .filter(book -> book.getReaderId() != 0)
+            .filter(book -> book.getReaderId() == reader.getId())
             .collect(toList());
         // Validate list as per business rules
         if (bookReturningValidator(books, reader).isEmpty()){
-            books.stream()
+            val returnedBooks = books.stream()
                 .map(book -> {
                     book.setReaderId(0); // disassociate the book from the reader
                     return book;
                 })
                 .collect(toList());
-            bookRepository.saveAll(books);
-            reader.getBooks().removeAll(books);
-            return books; // return list of books returned
+            bookRepository.saveAll(returnedBooks);
+            reader.getBooks().removeAll(returnedBooks);
+            return returnedBooks; // return list of returned books
         }
         return List.of(); // No books returned
-    }
+    } 
 
      /**************************************************\
                     Business Rules
