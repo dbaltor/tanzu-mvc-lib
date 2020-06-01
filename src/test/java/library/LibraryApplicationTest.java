@@ -37,7 +37,7 @@ public class LibraryApplicationTest{
 	private final Faker faker = new Faker();
 
 	@Autowired
-    private MockMvc mockMvc;
+	private MockMvc mockMvc;
 	@Autowired
 	private BookRepository bookRepository;
 	@Autowired
