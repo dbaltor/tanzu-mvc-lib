@@ -41,7 +41,7 @@ public class LibraryApplicationTest{
 	@Autowired
 	private BookRepository bookRepository;
 	@Autowired
-	private BookService BookService;
+	private BookService bookService;
 
 	// List of books created during the test to be removed right after
 	private List<Book> testBooks = new ArrayList<>();
@@ -73,7 +73,7 @@ public class LibraryApplicationTest{
 			Book.of("Go","","",""));
 		testBooks = (List<Book>)bookRepository.saveAll(testBooks);
 		//When
-		Optional<Book> book = BookService.retrieveBook(testBooks.get(1).getId());
+		Optional<Book> book = bookService.retrieveBook(testBooks.get(1).getId());
 		//Then
 		assertTrue(book.isPresent());
 	}
@@ -92,7 +92,7 @@ public class LibraryApplicationTest{
 					.map(book -> book.getId())
 					.collect(toList());
 			//When
-			testBooks = BookService.findBooksByIds(ids);
+			testBooks = bookService.findBooksByIds(ids);
 			//Then
 			assertThat(testBooks.size(), is(NUM_TEST_BOOKS));
 	}
@@ -100,9 +100,9 @@ public class LibraryApplicationTest{
 	@Test
 	public void shouldRetrieveAllBooks() {
 		//Given
-		BookService.loadDatabase(Optional.of(NUM_TEST_BOOKS), Optional.empty());
+		bookService.loadDatabase(Optional.of(NUM_TEST_BOOKS), Optional.empty());
 		//When
-		testBooks = BookService.retrieveBooks(Optional.empty(), Optional.empty());
+		testBooks = bookService.retrieveBooks(Optional.empty(), Optional.empty());
 		//Then
 		assertThat(testBooks.size(), is(NUM_TEST_BOOKS));
 	}
