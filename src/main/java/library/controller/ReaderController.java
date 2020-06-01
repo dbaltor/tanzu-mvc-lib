@@ -106,24 +106,6 @@ public class ReaderController {
             return String.format("No reader with ID %d has been found.", readerId);
     }
 
-    /*@PostMapping("/readers/{id}/returnBooks")
-    @ResponseBody
-    public String returnBooks(
-        @PathVariable(name = "id") long readerId,
-        @RequestBody BooksRequest booksRequest) {
-            val reader = readerService.retrieveReader(readerId);
-            if (reader.isPresent()){
-                val booksToReturn = Arrays.stream(booksRequest.bookIds)
-                .mapToObj(id -> bookService.retrieveBook(id))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toList());
-
-                val returnedBooks = bookService.returnBooks(booksToReturn, reader.get());
-                return String.format("The reader ID %d has returned %d book(s).", readerId, returnedBooks.size());
-            }
-            return String.format("No reader with ID %d has been found.", readerId);
-    }*/
     @PostMapping("/readers/{id}/returnBooks")
     @ResponseBody
     public String returnBooks(
