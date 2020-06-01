@@ -10,7 +10,6 @@ import library.model.exception.ReturningException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Arrays;
-import static java.util.stream.Collectors.*;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -81,11 +80,7 @@ public class ReaderController {
         @RequestBody BooksRequest booksRequest) {
             val reader = readerService.retrieveReader(readerId);
             if (reader.isPresent()){
-                val booksToBorrow = Arrays.stream(booksRequest.bookIds)
-                .mapToObj(id -> bookService.retrieveBook(id))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toList());
+                val booksToBorrow = bookService.findBooksByIds(Arrays.asList(booksRequest.bookIds));
                 try{ 
                     val borrowedBooks = bookService.borrowBooks(booksToBorrow, reader.get());
                     return String.format("The reader ID %d has borrowed %d book(s).", readerId, borrowedBooks.size());
@@ -113,11 +108,7 @@ public class ReaderController {
         @RequestBody BooksRequest booksRequest) {
             val reader = readerService.retrieveReader(readerId);
             if (reader.isPresent()){
-                val booksToReturn = Arrays.stream(booksRequest.bookIds)
-                .mapToObj(id -> bookService.retrieveBook(id))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toList());
+                val booksToReturn = bookService.findBooksByIds(Arrays.asList(booksRequest.bookIds));
                 try{ 
                     val returnedBooks = bookService.returnBooks(booksToReturn, reader.get());
                     return String.format("The reader ID %d has returned %d book(s).", readerId, returnedBooks.size());
@@ -142,5 +133,5 @@ public class ReaderController {
 
 @ToString
 class BooksRequest {
-    public long bookIds[];
+    public Long bookIds[];
 }

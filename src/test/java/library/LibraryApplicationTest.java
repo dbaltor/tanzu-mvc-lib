@@ -3,6 +3,9 @@ package library;
 import library.model.Book;
 import library.model.BookRepository;
 import library.model.BookService;
+import lombok.val;
+
+import com.github.javafaker.Faker;
 
 import org.junit.After;
 import org.junit.Test;
@@ -14,6 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+import static java.util.stream.Collectors.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -22,6 +27,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = LibraryApplication.class)
 public class LibraryApplicationTest{
+
+	private final Faker faker = new Faker();
 
 	@Autowired
 	private BookService BookService;
@@ -54,6 +61,26 @@ public class LibraryApplicationTest{
 		Optional<Book> book = BookService.retrieveBook(testBooks.get(1).getId());
 		//Then
 		assertTrue(book.isPresent());
+	}
+
+	@Test
+	public void shouldFindByIds() {
+			//Given
+			testBooks = new ArrayList<>();
+			val ids = Stream.iterate(0, e -> e + 1)
+					.limit(NUM_TEST_BOOKS)
+					.map(e -> Book.of(
+							faker.book().title(),
+							faker.book().author(),
+							faker.book().genre(),
+							faker.book().publisher()))
+					.map(book -> bookRepository.save(book))
+					.map(book -> book.getId())
+					.collect(toList());
+			//When
+			val books = BookService.findBooksByIds(ids);
+			//Then
+			assertThat(books.size(), is(NUM_TEST_BOOKS));
 	}
 	
 	@Test

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-
 import static java.util.stream.Collectors.*;
 
 import com.github.javafaker.Faker;
@@ -102,6 +101,12 @@ public class BookService {
         }
         return books;
     }
+
+    public List<Book> findBooksByIds(List<Long> ids) {
+       val books = new ArrayList<Book>();
+        bookRepository.findAllById(ids).forEach(books::add);
+        return books;
+    }    
 
     public List<Book> findBooksByReaderId(long id) {
         return bookRepository.findByReader(id);
