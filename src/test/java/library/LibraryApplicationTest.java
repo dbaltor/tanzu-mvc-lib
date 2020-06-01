@@ -3,16 +3,21 @@ package library;
 import library.model.Book;
 import library.model.BookRepository;
 import library.model.BookService;
-import lombok.val;
 
+import lombok.val;
 import com.github.javafaker.Faker;
 
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +31,18 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = LibraryApplication.class)
+@AutoConfigureMockMvc
 public class LibraryApplicationTest{
 
 	private final Faker faker = new Faker();
 
 	@Autowired
-	private BookService BookService;
+    private MockMvc mockMvc;
 	@Autowired
 	private BookRepository bookRepository;
-	
+	@Autowired
+	private BookService BookService;
+
 	// List of books created during the test to be removed right after
 	private List<Book> testBooks = new ArrayList<>();
 	private static final int NUM_TEST_BOOKS = 20;
@@ -43,10 +51,17 @@ public class LibraryApplicationTest{
     public void teardown() {
 		//Delete all books created for the tests
 		bookRepository.deleteAll(testBooks);
-    }	
+	}
 
 	@Test
 	public void contextLoads() {
+	}
+
+	@Test
+	public void shouldLoadHomePage() throws Exception {
+		mockMvc.perform(get("/"))
+			.andDo(print())
+			.andExpect(view().name("Index"));
 	}
 
 	@Test
@@ -66,7 +81,6 @@ public class LibraryApplicationTest{
 	@Test
 	public void shouldFindByIds() {
 			//Given
-			testBooks = new ArrayList<>();
 			val ids = Stream.iterate(0, e -> e + 1)
 					.limit(NUM_TEST_BOOKS)
 					.map(e -> Book.of(
@@ -78,19 +92,18 @@ public class LibraryApplicationTest{
 					.map(book -> book.getId())
 					.collect(toList());
 			//When
-			val books = BookService.findBooksByIds(ids);
+			testBooks = BookService.findBooksByIds(ids);
 			//Then
-			assertThat(books.size(), is(NUM_TEST_BOOKS));
+			assertThat(testBooks.size(), is(NUM_TEST_BOOKS));
 	}
 	
 	@Test
-	public void shouldStoreAllBooks() {
+	public void shouldRetrieveAllBooks() {
 		//Given
-		testBooks = new ArrayList<>();
 		BookService.loadDatabase(Optional.of(NUM_TEST_BOOKS), Optional.empty());
 		//When
-		List<Book> books = BookService.retrieveBooks(Optional.empty(), Optional.empty());
+		testBooks = BookService.retrieveBooks(Optional.empty(), Optional.empty());
 		//Then
-		assertThat(books.size(), is(NUM_TEST_BOOKS));
+		assertThat(testBooks.size(), is(NUM_TEST_BOOKS));
 	}
 }
