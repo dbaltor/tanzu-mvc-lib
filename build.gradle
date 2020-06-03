@@ -41,4 +41,5 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	
 	runtimeOnly 'com.h2database:h2'
+	compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '8.2.2.jre11'
 }
