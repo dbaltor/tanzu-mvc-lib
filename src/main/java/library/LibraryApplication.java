@@ -77,7 +77,7 @@ public class LibraryApplication {
 
     @PreDestroy
     public void onExit() {
-        bookService.cleanUpDatabase();
         readerService.cleanUpDatabase();
+        bookService.cleanUpDatabase();
     }
 }
