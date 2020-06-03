@@ -113,12 +113,12 @@ public class LibraryApplicationTest{
 	@Test
 	public void shouldRetrieveAllBooks() {
 		//Given
-		bookService.loadDatabase(Optional.of(NUM_TEST_BOOKS), Optional.empty());
-		//When
 		// Added to testBooks to be removed durig the teardown
-		testBooks = bookService.retrieveBooks(Optional.empty(), Optional.empty());
+		testBooks = bookService.loadDatabase(Optional.of(NUM_TEST_BOOKS), Optional.empty());
+		//When
+		val books = bookService.retrieveBooks(Optional.empty(), Optional.empty());
 		//Then
-		assertThat(testBooks.size(), is(NUM_TEST_BOOKS));
+		assertThat(books.size(), is(NUM_TEST_BOOKS));
 	}
 
 	@Test
