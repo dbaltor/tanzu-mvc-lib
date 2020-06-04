@@ -82,7 +82,7 @@ public class LibraryApplicationTest{
 			Book.of("Java","","",""),
 			Book.of("Node","","",""),
 			Book.of("Go","","",""));
-		// Added to testBooks to be removed durig the teardown
+		// Added to testBooks to be removed during the teardown
 		testBooks = (List<Book>)bookRepository.saveAll(testBooks);
 		//When
 		Optional<Book> book = bookService.retrieveBook(testBooks.get(1).getId());
@@ -104,7 +104,7 @@ public class LibraryApplicationTest{
 					.map(book -> book.getId())
 					.collect(toList());
 			//When
-			// Added to testBooks to be removed durig the teardown
+			// Added to testBooks to be removed during the teardown
 			testBooks = bookService.findBooksByIds(ids);
 			//Then
 			assertThat(testBooks.size(), is(NUM_TEST_BOOKS));
@@ -113,18 +113,19 @@ public class LibraryApplicationTest{
 	@Test
 	public void shouldRetrieveAllBooks() {
 		//Given
-		// Added to testBooks to be removed durig the teardown
+		val initialBooks = bookService.retrieveBooks(Optional.empty(), Optional.empty());
+		// Added to testBooks to be removed during the teardown
 		testBooks = bookService.loadDatabase(Optional.of(NUM_TEST_BOOKS), Optional.empty());
 		//When
 		val books = bookService.retrieveBooks(Optional.empty(), Optional.empty());
 		//Then
-		assertThat(books.size(), is(NUM_TEST_BOOKS));
+		assertThat(books.size(), is(initialBooks.size() + NUM_TEST_BOOKS));
 	}
 
 	@Test
 	public void shouldBorrowBooks() throws BorrowingException{
 		// Given
-		// Added to testReaders to be removed durig the teardown
+		// Added to testReaders to be removed during the teardown
 		testReaders.add(readerRepository.save(Reader.of(
 			"John", 
 			"Doe", 
@@ -135,7 +136,7 @@ public class LibraryApplicationTest{
 			Book.of("Java","","",""),
 			Book.of("Node","","",""),
 			Book.of("Go","","",""));
-		// Added to testBooks to be removed durig the teardown
+		// Added to testBooks to be removed during the teardown
 		testBooks = (List<Book>)bookRepository.saveAll(testBooks);
 		// When
 		bookService.borrowBooks(testBooks, testReaders.get(0));
@@ -147,7 +148,7 @@ public class LibraryApplicationTest{
 	@Test
 	public void shouldReturnBooks() throws BorrowingException, ReturningException{
 		// Given
-		// Added to testReaders to be removed durig the teardown
+		// Added to testReaders to be removed during the teardown
 		testReaders.add(readerRepository.save(Reader.of(
 			"John", 
 			"Doe", 
@@ -158,7 +159,7 @@ public class LibraryApplicationTest{
 			Book.of("Java","","",""),
 			Book.of("Node","","",""),
 			Book.of("Go","","",""));
-		// Added to testBooks to be removed durig the teardown
+		// Added to testBooks to be removed during the teardown
 		testBooks = (List<Book>)bookRepository.saveAll(testBooks);
 		bookService.borrowBooks(testBooks, testReaders.get(0));
 		// When
