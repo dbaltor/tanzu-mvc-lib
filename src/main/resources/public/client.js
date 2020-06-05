@@ -32,3 +32,9 @@ const borrowBooks = (books) => {
         callAndAlert('/readers/' + readerId + '/borrowBooks', books, true)
     }
 }
+
+const cleanUpDatabases = () => {
+    if (confirm('Are you sure?')) {
+        callAndAlert('/cleanup')
+    }
+}
