@@ -185,15 +185,17 @@ public class BookService {
         Predicate<List<Book>> maxBorrowingNotExceeded = 
             books -> books.size() + reader.getBooks().size() <= MAXIMUM_BORROWED_BOOKS;
         validators.put(BorrowingErrors.MAX_BORROWED_BOOKS_EXCEEDED, maxBorrowingNotExceeded);
-        // Future additional criteria...
         
-        Set<BorrowingErrors> errors = new HashSet<>();
-        if (!validators.get(BorrowingErrors.MAX_BORROWED_BOOKS_EXCEEDED).test(booksToBorrow)) {
-            errors.add(BorrowingErrors.MAX_BORROWED_BOOKS_EXCEEDED);
-        }
-        // Future additional tests...
+        // Future additional criteria...
+        // ...
 
-        return errors;
+        // Applying the validation criteria
+        return validators.entrySet()
+            .stream()
+            .filter(map -> !map.getValue().test(booksToBorrow)) // filter out the successful ones
+            .map(map -> map.getKey())
+            .collect(toSet());
+        
     }
    
      /**
