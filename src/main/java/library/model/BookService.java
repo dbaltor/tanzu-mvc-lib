@@ -182,9 +182,9 @@ public class BookService {
         Map<BorrowingErrors, Predicate<List<Book>>> validators = new HashMap<>();
         
         // Validation criterium: maximum borrowing books not to exceed 
-        Predicate<List<Book>> maxBorrowingNotExceeded = 
-            books -> books.size() + reader.getBooks().size() <= MAXIMUM_BORROWED_BOOKS;
-        validators.put(BorrowingErrors.MAX_BORROWED_BOOKS_EXCEEDED, maxBorrowingNotExceeded);
+        Predicate<List<Book>> maxBorrowingExceeded = 
+            books -> books.size() + reader.getBooks().size() > MAXIMUM_BORROWED_BOOKS;
+        validators.put(BorrowingErrors.MAX_BORROWED_BOOKS_EXCEEDED, maxBorrowingExceeded);
         
         // Future additional criteria...
         // ...
@@ -192,7 +192,7 @@ public class BookService {
         // Applying the validation criteria
         return validators.entrySet()
             .stream()
-            .filter(map -> !map.getValue().test(booksToBorrow)) // filter out the successful ones
+            .filter(map -> map.getValue().test(booksToBorrow)) // filter out the successful ones
             .map(map -> map.getKey())
             .collect(toSet());
         
