@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.github.javafaker.Faker;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor @Slf4j
 public class ReaderService {
-    private static final int DEFAULT_PAGE_SIZE = 20;
-    private static final int DEFAULT_LOAD_SIZE = 10;
+    @Value("${reader.default-page-size}")
+    private int DEFAULT_PAGE_SIZE;
+    @Value("${reader.default-load-size}")
+    private int DEFAULT_LOAD_SIZE;
+
     private final Faker faker = new Faker();
     private final @NonNull ReaderRepository readerRepository;
 

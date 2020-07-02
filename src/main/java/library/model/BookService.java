@@ -1,5 +1,6 @@
 package library.model;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +28,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class BookService {
-    private static final int DEFAULT_PAGE_SIZE = 20;
-    private static final int DEFAULT_LOAD_SIZE = 100;
-    private static final int DEFAULT_BORROWED_BOOKS = 2 * DEFAULT_PAGE_SIZE;
+    @Value("${book.default-page-size}")
+    private int DEFAULT_PAGE_SIZE;
+    @Value("${book.default-load-size}")
+    private int DEFAULT_LOAD_SIZE;
+    @Value("${book.default-borrowed-books}")
+    private int DEFAULT_BORROWED_BOOKS;
 
     private final @NonNull BookRepository bookRepository;
 
@@ -158,8 +162,9 @@ public class BookService {
 
      /**************************************************\
                     Business Rules
-    \**************************************************/    
-    private static final int MAXIMUM_BORROWED_BOOKS = 6;
+    \**************************************************/
+    @Value("${reader.max-allowed-borrowed-books}")
+    private int MAXIMUM_ALLOWED_BORROWED_BOOKS; 
 
     public enum BorrowingErrors {
         MAX_BORROWED_BOOKS_EXCEEDED
@@ -183,7 +188,7 @@ public class BookService {
         
         // Validation criterium: maximum borrowing books not to exceed 
         Predicate<List<Book>> maxBorrowingExceeded = 
-            books -> books.size() + reader.getBooks().size() > MAXIMUM_BORROWED_BOOKS;
+            books -> books.size() + reader.getBooks().size() > MAXIMUM_ALLOWED_BORROWED_BOOKS;
         validators.put(BorrowingErrors.MAX_BORROWED_BOOKS_EXCEEDED, maxBorrowingExceeded);
         
         // Future additional criteria...
