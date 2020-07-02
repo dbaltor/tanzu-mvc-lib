@@ -4,12 +4,9 @@ import library.LibraryApplication;
 import library.model.ReaderService;
 import library.model.BookService;
 import library.model.Reader;
-import library.model.exception.BorrowingException;
-import library.model.exception.ReturningException;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Arrays;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,13 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import lombok.ToString;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,7 +30,7 @@ public class ReaderController {
     private final @NonNull ReaderService readerService;
     private final @NonNull BookService bookService;
 
-    @GetMapping("/readers/list")
+    @GetMapping("/listreaders")
     public String listReaders(
         @RequestParam(name = "page") Optional<Integer> pageNum,
         @RequestParam(name = "size") Optional<Integer> pageSize,
@@ -65,73 +59,11 @@ public class ReaderController {
             return READERS_TEMPLATE;
     }
 
-    @PostMapping("/readers/load")
+    @PostMapping("/loadreaders")
     @ResponseBody
     public String loadDatabase(@RequestParam Optional<Integer> count) {
         // load database
         val readers = readerService.loadDatabase(count);
         return String.format("Reader database loaded with %d records", readers.size());
     }
-
-    @PostMapping("/readers/{id}/borrowBooks")
-    @ResponseBody
-    public String borrowBooks(
-        @PathVariable(name = "id") long readerId,
-        @RequestBody BooksRequest booksRequest) {
-            val reader = readerService.retrieveReader(readerId);
-            if (reader.isPresent()){
-                val booksToBorrow = bookService.findBooksByIds(Arrays.asList(booksRequest.bookIds));
-                try{ 
-                    val borrowedBooks = bookService.borrowBooks(booksToBorrow, reader.get());
-                    return String.format("The reader ID %d has borrowed %d book(s).", readerId, borrowedBooks.size());
-                } catch(BorrowingException e) {
-                    val errorMsg = new StringBuilder("Errors found:");
-                    for(BookService.BorrowingErrors error : e.errors) {
-                        switch (error) {
-                            case MAX_BORROWED_BOOKS_EXCEEDED:
-                                errorMsg.append(" *Maximum allowed borrowed books exceeded.");
-                                break;
-                            default:
-                                errorMsg.append(" *Unexpected error.");
-                        }
-                    }
-                    return errorMsg.toString();
-                }
-            }
-            return String.format("No reader with ID %d has been found.", readerId);
-    }
-
-    @PostMapping("/readers/{id}/returnBooks")
-    @ResponseBody
-    public String returnBooks(
-        @PathVariable(name = "id") long readerId,
-        @RequestBody BooksRequest booksRequest) {
-            val reader = readerService.retrieveReader(readerId);
-            if (reader.isPresent()){
-                val booksToReturn = bookService.findBooksByIds(Arrays.asList(booksRequest.bookIds));
-                try{ 
-                    val returnedBooks = bookService.returnBooks(booksToReturn, reader.get());
-                    return String.format("The reader ID %d has returned %d book(s).", readerId, returnedBooks.size());
-                } catch(ReturningException e) {
-                    val errorMsg = new StringBuilder("Errors found:");
-                    for(BookService.ReturningErrors error : e.errors) {
-                        switch (error) {
-                            // Reserved for future usage
-                            //case PLACEHOLDER:
-                            //    errorMsg.append(" *....");
-                            //    break;
-                            default:
-                                errorMsg.append(" *Unexpected error.");
-                        }
-                    }
-                    return errorMsg.toString();
-                }
-            }
-            return String.format("No reader with ID %d has been found.", readerId);
-    }
-}
-
-@ToString
-class BooksRequest {
-    public Long bookIds[];
 }

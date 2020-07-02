@@ -24,7 +24,7 @@
                 <td th:text="${#dates.format(reader.dob, 'dd-MM-yyyy')}"/>
                 <td th:text="${reader.address}"/>
                 <td th:text="${reader.phone}"/>
-                <td><a th:href="@{'/books/list?reader=' + ${reader.id}}" th:text="${#lists.isEmpty(reader.books)} ? '' : 'Books'" /></td>
+                <td><a th:href="@{'listbooks?reader=' + ${reader.id}}" th:text="${#lists.isEmpty(reader.books)} ? '' : 'Books'" /></td>
             </tr>
         </tbody>
     </table>

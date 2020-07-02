@@ -23,13 +23,17 @@ const callAndAlert = async (URL = '', data = {}, reload = false) => {
 }
 
 const borrowBooks = (books) => {
-    const readerId = prompt('Please enter the Reader ID.')
-    if (readerId) {
-        if (isNaN(readerId)) {
+    const id = prompt('Please enter the Reader ID.')
+    if (id) {
+        if (isNaN(id)) {
             alert('Reader ID must be a whole number.')
             return
         }
-        callAndAlert('/readers/' + readerId + '/borrowBooks', books, true)
+        const booksRequest = {
+            readerId: id,
+            bookIds: books
+        }
+        callAndAlert('/borrowbooks', booksRequest, true)
     }
 }
 
