@@ -32,9 +32,9 @@ public class ReaderController {
 
     @GetMapping("/listreaders")
     public String listReaders(
-        @RequestParam(name = "page") Optional<Integer> pageNum,
-        @RequestParam(name = "size") Optional<Integer> pageSize,
-        @RequestParam(name = "reader") Optional<Integer> readerId,
+        @RequestParam("page") Optional<Integer> pageNum,
+        @RequestParam("size") Optional<Integer> pageSize,
+        @RequestParam("reader") Optional<Integer> readerId,
         Model model) {
             // Set background color of response page
             model.addAttribute(LibraryApplication.UI_CONFIG_NAME, LibraryApplication.getUIConfig());
