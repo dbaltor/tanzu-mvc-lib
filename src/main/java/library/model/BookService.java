@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
+
 import static java.util.stream.Collectors.*;
 
 import com.github.javafaker.Faker;
@@ -83,6 +85,14 @@ public class BookService {
     }
 
     public void cleanUpDatabase() {
+        // disassociate books from readers before deletion
+        val borrowedBooks = StreamSupport.stream(bookRepository.findAll().spliterator(), false)
+            .parallel()
+            .filter(b -> b.getReader() != null)
+            .collect(toList());
+        borrowedBooks.parallelStream()
+            .forEach(b -> b.getReader().removeBook(b));
+        bookRepository.saveAll(borrowedBooks);
         bookRepository.deleteAll();
         log.info("Book database cleaned up...");
     }
@@ -120,7 +130,7 @@ public class BookService {
         // filter out books already borrowed
         val books = booksToBorrow
             .stream()
-            .filter(book -> book.getReaderId() == 0)
+            .filter(book -> book.getReader() == null)
             .collect(toList());
         // Validate list as per business rules
         val errors = bookBorrowingValidator(books, reader);
@@ -129,12 +139,11 @@ public class BookService {
         }
         val borrowedBooks = books.stream()
             .map(book -> {
-                book.setReaderId(reader.getId()); // associate the book to the reader
+                reader.addBook(book); // associate the book to the reader
                 return book;
             })
             .collect(toList());
         bookRepository.saveAll(borrowedBooks);
-        reader.getBooks().addAll(borrowedBooks);
         return borrowedBooks; // return list of borrowed books
    }
 
@@ -142,7 +151,7 @@ public class BookService {
         // filter out books not borrowed by this reader
         val books = booksToReturn
             .stream()
-            .filter(book -> book.getReaderId() == reader.getId())
+            .filter(book -> book.getReader().getId() == reader.getId())
             .collect(toList());
         // Validate list as per business rules
         val errors = bookReturningValidator(books, reader);
@@ -151,12 +160,11 @@ public class BookService {
         }
         val returnedBooks = books.stream()
             .map(book -> {
-                book.setReaderId(0); // disassociate the book from the reader
+                reader.removeBook(book); // disassociate the book from the reader
                 return book;
             })
             .collect(toList());
         bookRepository.saveAll(returnedBooks);
-        reader.getBooks().removeAll(returnedBooks);
         return returnedBooks; // return list of returned books
     }
 

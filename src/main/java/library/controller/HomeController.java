@@ -31,8 +31,10 @@ public class HomeController {
     @PostMapping("/cleanup")
     @ResponseBody
     String cleanUp() {
-        readerService.cleanUpDatabase();
+        // Books must be firstly removed due to referential constraint.
+        // BookService disassociate books before deleting them.
         bookService.cleanUpDatabase();
+        readerService.cleanUpDatabase();
         return "The data have been removed";
     }
 }

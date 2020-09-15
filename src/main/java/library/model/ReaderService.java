@@ -59,7 +59,6 @@ public class ReaderService {
             readerRepository
                 .findAll(PageRequest.of(pageNum.get(), pageSize.orElse(DEFAULT_PAGE_SIZE)))
                 .forEach(reader -> {
-                    reader.setBooks(bookService.findBooksByReaderId(reader.getId()));
                     readers.add(reader);
                 });
         }
@@ -67,7 +66,6 @@ public class ReaderService {
             readerRepository
                 .findAll()
                 .forEach(reader -> {
-                    reader.setBooks(bookService.findBooksByReaderId(reader.getId()));
                     readers.add(reader);
                 });
         }
@@ -75,14 +73,6 @@ public class ReaderService {
     }
     
     public Optional<Reader> retrieveReader(long id) {
-        val reader = readerRepository.findById(id);
-        if (reader.isPresent()) {
-            reader.get().setBooks(
-                bookService.findBooksByReaderId(
-                    reader.get().getId()
-                    )
-            );
-        }
-        return reader;
+        return readerRepository.findById(id);
     }
 }

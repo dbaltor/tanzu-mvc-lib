@@ -58,10 +58,14 @@ public class LibraryApplicationTest{
 	
     @After
     public void teardown() {
-		// Delete all readers created for the tests
-		readerRepository.deleteAll(testReaders);
+		// Disassociate book, if borrowed
+		testBooks.parallelStream()
+			.filter(b -> b.getReader() != null)
+			.forEach(b -> b.getReader().removeBook(b));
 		// Delete all books created for the tests
 		bookRepository.deleteAll(testBooks);
+		// Delete all readers created for the tests
+		readerRepository.deleteAll(testReaders);
 	}
 
 	@Test

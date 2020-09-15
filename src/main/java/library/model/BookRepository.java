@@ -10,6 +10,6 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Long> {
 
     public List<Book> findByName(String name);
 
-    @Query(value = "select b from Book b where b.readerId = :readerId")
+    @Query(value = "select b from Book b where b.reader.id = :readerId")
     public List<Book> findByReader(@Param("readerId") long readerId);
 }

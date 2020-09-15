@@ -23,11 +23,11 @@
                 <td th:text="${book.author}"/>
                 <td th:text="${book.genre}"/>
                 <td th:text="${book.publisher}"/>
-                <span th:if="${book.readerId}">
-                    <td><a th:href="@{'/listreaders?reader=' + ${book.readerId}}" th:text="${book.readerId}"/></td>
-                    <td><a th:href="'javascript:callAndAlert(\'/returnbooks\', { \'readerId\': \'' + ${book.readerId} + '\', \'bookIds\': [\'' + ${book.id} + '\'] }, true)'">Return</a></td>
+                <span th:if="${book.reader}">
+                    <td><a th:href="@{'/listreaders?reader=' + ${book.reader.id}}" th:text="${book.reader.id}"/></td>
+                    <td><a th:href="'javascript:callAndAlert(\'/returnbooks\', { \'readerId\': \'' + ${book.reader.id} + '\', \'bookIds\': [\'' + ${book.id} + '\'] }, true)'">Return</a></td>
                 </span>
-                <span th:unless="${book.readerId}">
+                <span th:unless="${book.reader}">
                     <td>AVAILABLE</td>
                     <td><a th:href="'javascript:borrowBooks([\'' + ${book.id} + '\'])'">Borrow</a></td>
                 </span>
