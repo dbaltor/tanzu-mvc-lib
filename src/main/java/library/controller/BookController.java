@@ -98,7 +98,7 @@ public class BookController {
                 borrowedBooks.size()));
         } catch(BorrowingException e) {
             val errorMsg = new StringBuilder("Errors found:");
-            for(BookService.BorrowingErrors error : e.errors) {
+            for(ReaderService.BorrowingErrors error : e.errors) {
                 switch (error) {
                     case MAX_BORROWED_BOOKS_EXCEEDED:
                         errorMsg.append(" *Maximum allowed borrowed books exceeded.");
@@ -139,7 +139,7 @@ public class BookController {
                 returnedBooks.size()));
         } catch(ReturningException e) {
             val errorMsg = new StringBuilder("Errors found:");
-            for(BookService.ReturningErrors error : e.errors) {
+            for(ReaderService.ReturningErrors error : e.errors) {
                 switch (error) {
                     // Reserved for future usage
                     //case PLACEHOLDER:

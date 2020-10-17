@@ -2,7 +2,7 @@ package library.model.exception;
 
 import java.util.Set;
 
-import library.model.BookService.BorrowingErrors;
+import library.model.ReaderService.BorrowingErrors;
 
 public class BorrowingException extends Exception {
     public Set<BorrowingErrors> errors;

@@ -2,7 +2,7 @@ package library.model.exception;
 
 import java.util.Set;
 
-import library.model.BookService.ReturningErrors;
+import library.model.ReaderService.ReturningErrors;
 
 public class ReturningException extends Exception {
     public Set<ReturningErrors> errors;

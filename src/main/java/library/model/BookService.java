@@ -8,15 +8,9 @@ import library.model.exception.BorrowingException;
 import library.model.exception.ReturningException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
-
 import static java.util.stream.Collectors.*;
 
 import com.github.javafaker.Faker;
@@ -38,6 +32,7 @@ public class BookService {
     private int DEFAULT_BORROWED_BOOKS;
 
     private final @NonNull BookRepository bookRepository;
+    private final @NonNull ReaderService readerService;
 
     private final Faker faker = new Faker();
 
@@ -133,7 +128,7 @@ public class BookService {
             .filter(book -> book.getReader() == null)
             .collect(toList());
         // Validate list as per business rules
-        val errors = bookBorrowingValidator(books, reader);
+        val errors = readerService.bookBorrowingValidator(books, reader);
         if (!errors.isEmpty()){
             throw new BorrowingException(errors);
         }
@@ -154,7 +149,7 @@ public class BookService {
             .filter(book -> book.getReader().getId() == reader.getId())
             .collect(toList());
         // Validate list as per business rules
-        val errors = bookReturningValidator(books, reader);
+        val errors = readerService.bookReturningValidator(books, reader);
         if (!errors.isEmpty()){
             throw new ReturningException(errors);
         }
@@ -166,58 +161,5 @@ public class BookService {
             .collect(toList());
         bookRepository.saveAll(returnedBooks);
         return returnedBooks; // return list of returned books
-    }
-
-     /**************************************************\
-                    Business Rules
-    \**************************************************/
-    @Value("${reader.max-allowed-borrowed-books}")
-    private int MAXIMUM_ALLOWED_BORROWED_BOOKS; 
-
-    public enum BorrowingErrors {
-        MAX_BORROWED_BOOKS_EXCEEDED
-        // Future error codes
-    }
-
-    public enum ReturningErrors {
-        PLACEHOLDER
-        // Future error codes
-    }
-
-    /**
-     * Validate whether the list of books can be borrowed by the reader.
-     * @param reader        The reader trying to borrow the books
-     * @param booksToBorrow The list of books to borrow
-     * @return              The set of validation failures, is any. Otherwise, an empty set.         
-     */
-    public Set<BorrowingErrors> bookBorrowingValidator(List<Book> booksToBorrow, Reader reader) {
-        // List of all validation criteria to be applied
-        Map<BorrowingErrors, Predicate<List<Book>>> validators = new HashMap<>();
-        
-        // Validation criterium: maximum borrowing books not to exceed 
-        Predicate<List<Book>> maxBorrowingExceeded = 
-            books -> books.size() + reader.getBooks().size() > MAXIMUM_ALLOWED_BORROWED_BOOKS;
-        validators.put(BorrowingErrors.MAX_BORROWED_BOOKS_EXCEEDED, maxBorrowingExceeded);
-        
-        // Future additional criteria...
-        // ...
-
-        // Applying the validation criteria
-        return validators.entrySet()
-            .stream()
-            .filter(map -> map.getValue().test(booksToBorrow)) // filter out the successful ones
-            .map(map -> map.getKey())
-            .collect(toSet());
-        
-    }
-   
-     /**
-     * Validate whether the list of books can be returned by the reader.
-     * @param reader        The reader trying to return the books
-     * @param booksToBorrow The list of books to return
-     * @return              The set of validation failures, if any. Otherwise, an empty set.        
-     */
-    public Set<ReturningErrors> bookReturningValidator(List<Book> booksToReturn, Reader reader) {
-        return new HashSet<>();
     }
 }
