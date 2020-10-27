@@ -10,7 +10,7 @@ Different AIs will render the UI using different background colors when running 
 <br>
 You can generate 10 readers at a time clicking on the <i>Load Readers</i> button.<br>
 You can generate 100 books at a time clicking on the <i>Load Books</i> button. The first 40 books will evenly be assigned to some readers.<br>
-You can visualise the list of readers and books following the corresponding links. Use the Browser's back buttom to return to the home page.<br>
+You can visualise the list of readers and books following the corresponding links. Use the browser's back buttom to return to the home page.<br>
 <p/>
 <p/>
 <h2>Testing locally:</h2>
