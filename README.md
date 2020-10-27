@@ -78,5 +78,5 @@ applications:
 <br>
 1) The application implements the Model-View-Controller (MVC) architectural pattern which is easy when using the Spring framework.<br>
 <br>
-2) A SQL database has been chosen as data store. The default implementation is the H2 embedded in-memory database.<br>
+2) A SQL database has been chosen as data store. The default implementation is the H2 embedded in-memory database when running locally.<br>
 
