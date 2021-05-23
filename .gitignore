@@ -1,3 +1,9 @@
+# IDE config
+.DS_Store
+.classpath
+.project
+.settings/
+.vscode/
 
 # build artifacts
 .gradle
