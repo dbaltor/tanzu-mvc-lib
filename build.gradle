@@ -13,8 +13,8 @@ applicationDefaultJvmArgs = ["--enable-preview"]
 
 group = 'library'
 version = '1.0.0'
-sourceCompatibility = 11
-targetCompatibility = 11
+sourceCompatibility = 17
+targetCompatibility = 17
 
 configurations {
 	compileOnly {
@@ -37,10 +37,10 @@ dependencies {
 
 	implementation 'com.github.javafaker:javafaker:1.0.1'
 	
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+	testCompileOnly 'org.projectlombok:lombok:1.18.22'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 	
 	runtimeOnly 'com.h2database:h2'
 }
